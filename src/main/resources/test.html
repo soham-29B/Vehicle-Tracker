@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+    <h2>Vehicle Tracker WebSocket Test</h2>
+    <div id="output"></div>
+
+    <script>
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function () {
+            console.log('Connected!');
+            stompClient.subscribe('/topic/vehicles', function (message) {
+                const div = document.getElementById('output');
+                div.innerHTML = '<pre>' + message.body + '</pre>';
+            });
+        });
+    </script>
+</body>
+</html>

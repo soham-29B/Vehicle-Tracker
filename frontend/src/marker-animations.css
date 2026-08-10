@@ -1,0 +1,55 @@
+.vehicle-marker-wrapper {
+    background: transparent;
+    border: none;
+}
+
+.vehicle-marker {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+.vehicle-marker-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--marker-color);
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    z-index: 2;
+}
+
+/* moving: pulse ring */
+.vehicle-marker-pulse-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--marker-color);
+    opacity: 0.5;
+    animation: pulse-ring 1.5s ease-out infinite;
+    z-index: 1;
+}
+
+@keyframes pulse-ring {
+    0%   { transform: scale(0.6); opacity: 0.6; }
+    100% { transform: scale(2);   opacity: 0;   }
+}
+
+/* idle: scale-bump tick */
+.marker-idle-tick .vehicle-marker-dot {
+    animation: idle-bump 2s ease-in-out infinite;
+}
+
+@keyframes idle-bump {
+    0%, 100% { transform: scale(1);    }
+    50%      { transform: scale(1.25); }
+}
+
+.marker-selected .vehicle-marker-dot {
+    box-shadow: 0 0 0 2px #fff, 0 0 4px rgba(0, 0, 0, 0.4);
+}
