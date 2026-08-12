@@ -23,16 +23,8 @@
 
 /* moving: pulse ring */
 .vehicle-marker-pulse-ring {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--marker-color);
-    opacity: 0.5;
-    animation: pulse-ring 1.5s ease-out infinite;
-    z-index: 1;
+    width: 36px;
+    height: 36px;
 }
 
 @keyframes pulse-ring {
@@ -53,3 +45,16 @@
 .marker-selected .vehicle-marker-dot {
     box-shadow: 0 0 0 2px #fff, 0 0 4px rgba(0, 0, 0, 0.4);
 }
+    .vehicle-marker-ring {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--marker-color);
+        border: 3px solid #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        position: relative;
+        z-index: 2;
+    }

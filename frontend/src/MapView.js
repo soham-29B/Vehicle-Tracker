@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import './marker-animations.css';
@@ -23,19 +23,33 @@ function createVehicleIcon(status, isSelected) {
     className: 'vehicle-marker-wrapper',
     html: `
       <div class="vehicle-marker ${animationClass} ${isSelected ? 'marker-selected' : ''}" style="--marker-color: ${color}">
-        <div class="vehicle-marker-dot"></div>
+        <div class="vehicle-marker-ring">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="none">
+            <path d="M3 11l18-8-8 18-2-8-8-2z" />
+          </svg>
+        </div>
         ${status === 'moving' ? '<div class="vehicle-marker-pulse-ring"></div>' : ''}
       </div>
     `,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
   });
 }
 
-function MapView({ vehicles, selectedVehicle, routePoints }) {
+function RecenterOnVehicle({ vehicle }) {
+  const map = useMap();
+  useEffect(() => {
+    if (vehicle) {
+      map.setView([vehicle.latitude, vehicle.longitude], 15);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vehicle?.id]);
+  return null;
+}
+
+function MapView({ vehicles, selectedVehicle, routePoints, focusVehicle }) {
   const [tick, setTick] = useState(0);
 
-  // force re-render every 5s so offline detection fires even with no new WS messages
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), TICK_INTERVAL_MS);
     return () => clearInterval(interval);
@@ -49,16 +63,21 @@ function MapView({ vehicles, selectedVehicle, routePoints }) {
 
   const polylinePoints = routePoints.map(p => [p.latitude, p.longitude]);
 
+  const initialCenter = focusVehicle && selectedVehicle
+      ? [selectedVehicle.latitude, selectedVehicle.longitude]
+      : [20.2961, 85.8245];
+
   return (
       <MapContainer
-          center={[20.2961, 85.8245]}
-          zoom={13}
+          center={initialCenter}
+          zoom={focusVehicle ? 15 : 13}
           style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
+        {focusVehicle && <RecenterOnVehicle vehicle={selectedVehicle} />}
         {vehiclesWithStatus.map((vehicle) => (
             <Marker
                 key={`${vehicle.id}-${vehicle.lastUpdated}`}
