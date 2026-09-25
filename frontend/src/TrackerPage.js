@@ -37,7 +37,7 @@ function TrackerPage() {
         const targetPlate = decodeURIComponent(plate).trim().toUpperCase();
 
         const client = new Client({
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+                webSocketFactory: () => new SockJS(`${process.env.REACT_APP_API_URL}/ws`),
             onConnect: () => {
                 client.subscribe('/topic/vehicles', (message) => {
                     const incoming = JSON.parse(message.body);
@@ -75,7 +75,7 @@ function TrackerPage() {
     // fetch route history once we learn the vehicle's id
     useEffect(() => {
         if (vehicle?.id) {
-            fetch(`http://localhost:8080/api/vehicles/${vehicle.id}/route`)
+            fetch(`${process.env.REACT_APP_API_URL}/api/vehicles/${vehicle.id}/route`)
                 .then(res => res.json())
                 .then(data => setRoutePoints(data));
         }
